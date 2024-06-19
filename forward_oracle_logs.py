@@ -86,8 +86,9 @@ def main():
 
         # Print and log each row
         for row in rows:
+            #tag each row data with the table name
             print(row)
-            logger.info(row)
+            logger.info(f"{table_name}: {row}")
 
         #update the state file with the new state data
         update_state(table_name, last_rows_read+len(rows))
