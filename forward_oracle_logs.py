@@ -87,6 +87,8 @@ def main():
     # Define the list of oracle database tables to target
     oracle_database_tables = list_of_oracle_tables()
     
+    state = {}
+
     # Read the state file for each table
     for table in oracle_database_tables:
         state = read_state(table)
