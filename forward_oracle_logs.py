@@ -37,6 +37,12 @@ def create_state_file():
         with open(STATE_FILE, "w") as f:
             pass
 
+'''Create a tables file if the file does not exist'''
+def create_table_file():
+    if not os.path.exists(TABLES_FILE):
+        with open(TABLES_FILE, "w") as f:
+            pass
+
 '''Read the current state of the file and store it in a dictionary'''
 def read_state():
     state = {};
@@ -64,6 +70,9 @@ def main():
     # Create a state file if the file does not exist
     create_state_file()
 
+    #create a table file if the file does not exist
+    create_table_file()
+    
     # Read the state file
     state = read_state()
 
