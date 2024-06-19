@@ -8,6 +8,3 @@ TABLES_FILE = 'tables.txt' #file to insert the table names you want the script t
 ORACLE_USERNAME = "script"
 ORACLE_DSN = "oracle-db:1521/oratest1"
 
-# ORACLE TABLE NAMES
-table_name = "SYS.ORG" 
-

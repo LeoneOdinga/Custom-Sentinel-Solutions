@@ -90,11 +90,6 @@ def main():
     # Prompt the user for the Oracle DB password
     ORACLE_PASSWORD = getpass.getpass("Enter Oracle DB Password: ")
 
-    #Testing... Try printing the list of oracle tables
-    oracle_table_list = list_of_oracle_tables()
-    for list in oracle_table_list:
-        print(list)
-
     try:
         # Connect to Oracle database
         connection = connect_to_oracle(ORACLE_USERNAME, ORACLE_PASSWORD, ORACLE_DSN)
@@ -102,21 +97,29 @@ def main():
         # Create a cursor object
         cursor = connection.cursor()
 
-        # Define the SQL query and offset query results with last rows read
-        last_rows_read = state.get(table_name, 0)
-        sql_query = f"SELECT * FROM {table_name} OFFSET {last_rows_read} ROWS"
+        # Define the list of oracle database tables to target
+        oracle_database_tables = list_of_oracle_tables()
 
-        # Execute the SQL query
-        rows = execute_query(cursor, sql_query)
+        # For each table_name, run the sql query and send the results to syslog
 
-        # Print and log each row
-        for row in rows:
-            #tag each row data with the table name
-            print(row)
-            logger.info(f"{table_name}: {row}")
+        for table in oracle_database_tables:
+            if table != "":
+                # Define the SQL query and offset query results with last rows read
+                last_rows_read = state.get(table,0)
+                sql_query = f"SELECT * FROM {table} OFFSET {last_rows_read} ROWS"
+                #Execute the query
+                rows = execute_query(cursor,sql_query)
+                #Print and send each row data to syslog server
+                for row in rows:
+                    #tag each row data with the table name
+                    print(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
+                    logger.info(f"{table}: {row}")
 
-        #update the state file with the new state data
-        update_state(table_name, last_rows_read+len(rows))
+                #update the state file with the new state data
+                update_state(table_name, last_rows_read+len(rows))
+            else:
+                print("No Oracle Tables Defined!")
+                break
 
     except Exception as e:
         print(f"An error occured: {e}")
