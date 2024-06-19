@@ -2,12 +2,8 @@ import getpass
 import oracledb
 import logging
 import os
+from data_inputs import *
 from logging.handlers import SysLogHandler
-
-#CONSTANTS
-SYSLOG_SVR_IP = "10.0.0.5"
-SYSLOG_SVR_PORT = 514
-STATE_FILE = '.state'
 
 def setup_logging():
     """Configure logging to send logs to the syslog server."""
@@ -35,7 +31,7 @@ def execute_query(cursor, sql_query):
     except Exception as e:
         raise
 
-'''Create a state file is the file does not exist'''
+'''Create a state file if the file does not exist'''
 def create_state_file():
     if not os.path.exists(STATE_FILE):
         with open(STATE_FILE, "w") as f:
@@ -70,26 +66,19 @@ def main():
 
     # Read the state file
     state = read_state()
-    print(state)
 
     # Prompt the user for the Oracle DB password
-    pw = getpass.getpass("Enter Oracle DB Password: ")
-
-    # Define Oracle database connection details
-    username = "script"
-    dsn = "oracle-db:1521/oratest1"
+    ORACLE_PASSWORD = getpass.getpass("Enter Oracle DB Password: ")
 
     try:
         # Connect to Oracle database
-        connection = connect_to_oracle(username, pw, dsn)
+        connection = connect_to_oracle(ORACLE_USERNAME, ORACLE_PASSWORD, ORACLE_DSN)
 
         # Create a cursor object
         cursor = connection.cursor()
 
-        # Define the SQL query
-        table_name = "SYS.ORG"
+        # Define the SQL query and offset query results with last rows read
         last_rows_read = state.get(table_name, 0)
-        print(last_rows_read)
         sql_query = f"SELECT * FROM {table_name} OFFSET {last_rows_read} ROWS"
 
         # Execute the SQL query
@@ -104,7 +93,7 @@ def main():
         update_state(table_name, last_rows_read+len(rows))
 
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        print(f"An error occured: {e}")
 
     finally:
         # Close the cursor and connection
