@@ -63,6 +63,7 @@ def update_state(table_name, last_rows_read):
         for table, rows in state.items():
             f.write(f"{table}:{rows}\n")
 
+'''Returns a list of oracle table names defined in the tables file'''
 def list_of_oracle_tables():
     try:
         with open(TABLES_FILE, 'r') as file:
@@ -88,6 +89,10 @@ def main():
 
     # Prompt the user for the Oracle DB password
     ORACLE_PASSWORD = getpass.getpass("Enter Oracle DB Password: ")
+
+    #Testing... Try printing the list of oracle tables
+    for list in list_of_oracle_tables:
+        print(list)
 
     try:
         # Connect to Oracle database
