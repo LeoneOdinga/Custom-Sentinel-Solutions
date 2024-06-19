@@ -91,7 +91,8 @@ def main():
     ORACLE_PASSWORD = getpass.getpass("Enter Oracle DB Password: ")
 
     #Testing... Try printing the list of oracle tables
-    for list in list_of_oracle_tables:
+    oracle_table_list = list_of_oracle_tables()
+    for list in oracle_table_list:
         print(list)
 
     try:
