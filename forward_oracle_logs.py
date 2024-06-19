@@ -57,7 +57,7 @@ def read_state():
 
 '''Updates the state file with the last rows read'''
 def update_state(table_name, last_rows_read):
-    state = read_state(table_name)
+    state = read_state()
     state[table_name] = last_rows_read
     with open(STATE_FILE, "w") as f:
         for table, rows in state.items():
@@ -86,13 +86,10 @@ def main():
 
     # Define the list of oracle database tables to target
     oracle_database_tables = list_of_oracle_tables()
-
-    # Define a state dictionary to keep track of the last sent logs for each table
-    state = {}
-
+    
     # Read the state for the tables
     state = read_state()
-    
+
     # Prompt the user for the Oracle DB password
     ORACLE_PASSWORD = getpass.getpass("Enter Oracle DB Password: ")
 
