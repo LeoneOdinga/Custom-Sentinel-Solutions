@@ -9,3 +9,4 @@ ORACLE_DSN = "oracle-db:1521/oratest1"
 
 # ORACLE TABLE NAMES
 table_name = "SYS.ORG"   # for Multiple table names, we would need to store them in a list and update the driver code. This would be done during the scaling phase of the project
+
