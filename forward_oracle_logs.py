@@ -89,7 +89,7 @@ def main():
     
     # Read the state file for each table
     for table in oracle_database_tables:
-        state = read_state()
+        state = read_state(table)
     
     print(state)
 
