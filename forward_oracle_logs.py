@@ -86,14 +86,17 @@ def main():
 
     # Define the list of oracle database tables to target
     oracle_database_tables = list_of_oracle_tables()
-    
+
+    # Define a state dictionary to keep track of the last sent logs for each table
     state = {}
 
     # Read the state file for each table
     for table in oracle_database_tables:
-        state = read_state(table)
-    
-    print(state)
+        if table != "":
+            state = read_state(table)
+            print(state)
+        else:
+            print("Cannot fetch the state of the speficied table. Table Missing!")
 
     # Prompt the user for the Oracle DB password
     ORACLE_PASSWORD = getpass.getpass("Enter Oracle DB Password: ")
