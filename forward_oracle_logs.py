@@ -63,8 +63,18 @@ def update_state(table_name, last_rows_read):
         for table, rows in state.items():
             f.write(f"{table}:{rows}\n")
 
+def list_of_oracle_tables():
+    try:
+        with open(TABLES_FILE, 'r') as file:
+            lines = file.readlines()
+            return [line.strip() for line in lines]
+    except FileNotFoundError:
+        print(f"File Not Found!")
+        return []
+    
 def main():
     # Set up logging
+
     logger = setup_logging()
 
     # Create a state file if the file does not exist
