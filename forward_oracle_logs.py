@@ -44,7 +44,7 @@ def create_table_file():
             pass
 
 '''Read the current state of the file and store it in a dictionary'''
-def read_state():
+def read_state(table_name):
     state = {};
     if os.path.exists(STATE_FILE):
         with open(STATE_FILE, "r") as f:
@@ -57,7 +57,7 @@ def read_state():
 
 '''Updates the state file with the last rows read'''
 def update_state(table_name, last_rows_read):
-    state = read_state()
+    state = read_state(table_name)
     state[table_name] = last_rows_read
     with open(STATE_FILE, "w") as f:
         for table, rows in state.items():
@@ -74,8 +74,8 @@ def list_of_oracle_tables():
         return []
     
 def main():
-    # Set up logging
 
+    # Set up logging
     logger = setup_logging()
 
     # Create a state file if the file does not exist
@@ -83,9 +83,15 @@ def main():
 
     #create a table file if the file does not exist
     create_table_file()
+
+    # Define the list of oracle database tables to target
+    oracle_database_tables = list_of_oracle_tables()
     
-    # Read the state file
-    state = read_state()
+    # Read the state file for each table
+    for table in oracle_database_tables:
+        state = read_state()
+    
+    print(state)
 
     # Prompt the user for the Oracle DB password
     ORACLE_PASSWORD = getpass.getpass("Enter Oracle DB Password: ")
@@ -97,10 +103,7 @@ def main():
         # Create a cursor object
         cursor = connection.cursor()
 
-        # Define the list of oracle database tables to target
-        oracle_database_tables = list_of_oracle_tables()
-
-        # For each table_name, run the sql query and send the results to syslog
+        # For each table name, run the sql query and send the results to syslog
 
         for table in oracle_database_tables:
             if table != "":
@@ -116,7 +119,7 @@ def main():
                     logger.info(f"{table}: {row}")
 
                 #update the state file with the new state data
-                update_state(table_name, last_rows_read+len(rows))
+                update_state(table, last_rows_read+len(rows))
             else:
                 print("No Oracle Tables Defined!")
                 break
