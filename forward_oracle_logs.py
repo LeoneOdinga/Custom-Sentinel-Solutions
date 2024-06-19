@@ -93,8 +93,9 @@ def main():
     # Read the state file for each table
     for table in oracle_database_tables:
         if table != "":
-            state = read_state(table)
-            print(state)
+            table_state = read_state(table)
+            if table_state is not None and table_state != state.get(table):
+                state[table] = table_state
         else:
             print("Cannot fetch the state of the speficied table. Table Missing!")
 
