@@ -40,12 +40,14 @@ def execute_query(cursor, sql_query):
 def create_state_file():
     if not os.path.exists(STATE_FILE):
         with open(STATE_FILE, "w") as f:
+            print_ok("State file created!")
             pass
 
 '''Create a tables file if the file does not exist'''
 def create_table_file():
     if not os.path.exists(TABLES_FILE):
         with open(TABLES_FILE, "w") as f:
+            print_ok("Tables file created!")
             pass
 
 '''Read the current state of the file and store it in a dictionary'''
@@ -158,7 +160,7 @@ def main():
         for table in oracle_database_tables:
             # Test connectivity to Syslog server before sending logs
             if not syslog_isAlive(SYSLOG_SVR_IP):
-                print_error("Cannot connect to the syslog server. Make sure the Syslog Server is running.")
+                print_error("Cannot connect to the syslog server. Make sure the Syslog Server is running!")
                 break
 
             if table != "":
@@ -169,6 +171,11 @@ def main():
                 rows = execute_query(cursor,sql_query)
                 #Print and send each row data to syslog server
                 for row in rows:
+                    #break the loop if the row contains no data
+                    if row is None:
+                        print_ok(f"No Data Read For Table: {table}")
+                        print_notice(f"Total Rows Sent to Syslog: {last_rows_read}")
+                        break
                     #tag each row data with the table name
                     print_ok(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
                     logger.info(f"{table}: {row}")
