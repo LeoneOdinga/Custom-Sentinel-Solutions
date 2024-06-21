@@ -18,9 +18,10 @@ def connect_to_oracle(username, password, dsn):
     """Connect to the Oracle database."""
     try:
         connection = oracledb.connect(user=username, password=password, dsn=dsn)
+        print_ok("Connected to Oracle database!")
         return connection
     except Exception as e:
-        print(f"An Error Ocurred: {e}")
+        print_error(f"An Error Ocurred: {e}")
         raise
 
 def execute_query(cursor, sql_query):
@@ -71,7 +72,7 @@ def list_of_oracle_tables():
             lines = file.readlines()
             return [line.strip() for line in lines]
     except FileNotFoundError:
-        print(f"File Not Found!")
+        print_error(f"File Not Found!")
         return []
     
 '''Test Connectivity to the syslog server before sending the logs'''
@@ -85,8 +86,40 @@ def syslog_isAlive(syslog_svr_ip):
         else:
             return False
     except Exception as e:
-        print(f"An Error Ocurred: {e}")
+        print_error(f"An Error Ocurred: {e}")
         return False
+
+def print_error(input_str):
+    '''
+    Print given text in red color for Error text
+    :param input_str:
+    '''
+    print("\033[1;31;40m" + input_str + "\033[0m")
+
+
+def print_ok(input_str):
+    '''
+    Print given text in green color for Ok text
+    :param input_str:
+    '''
+    print("\033[1;32;40m" + input_str + "\033[0m")
+
+
+def print_warning(input_str):
+    '''
+    Print given text in yellow color for warning text
+    :param input_str:
+    '''
+    print("\033[1;33;40m" + input_str + "\033[0m")
+
+
+def print_notice(input_str):
+    '''
+    Print given text in white background
+    :param input_str:
+    '''
+    print("\033[0;30;47m" + input_str + "\033[0m")
+
 def main():
     # Set up logging
     logger = setup_logging()
@@ -119,8 +152,11 @@ def main():
         for table in oracle_database_tables:
             # Test connectivity to Syslog server before sending logs
             if not syslog_isAlive(SYSLOG_SVR_IP):
-                print("Cannot connect to the syslog server. Make sure the Syslog Server is running.")
+                print_error("Cannot connect to the syslog server. Make sure the Syslog Server is running.")
                 break
+
+            print_ok("CONNECTIVITY TO SYSLOG SERVER ESTABLISHED!")
+
             if table != "":
                 # Define the SQL query and offset query results with last rows read
                 last_rows_read = state.get(table,0)
@@ -130,17 +166,17 @@ def main():
                 #Print and send each row data to syslog server
                 for row in rows:
                     #tag each row data with the table name
-                    print(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
+                    print_ok(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
                     logger.info(f"{table}: {row}")
 
                 #update the state file with the new state data
                 update_state(table, last_rows_read+len(rows))
             else:
-                print("No Oracle Tables Defined!")
+                print_error("No Oracle Tables Defined!")
                 break
 
     except Exception as e:
-        print(f"An error occured: {e}")
+        print_error(f"An error occured: {e}")
 
     finally:
         # Close the cursor and connection
