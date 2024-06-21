@@ -169,13 +169,13 @@ def main():
                 sql_query = f"SELECT * FROM {table} OFFSET {last_rows_read} ROWS"
                 #Execute the query
                 rows = execute_query(cursor,sql_query)
+
+                if not rows:
+                    print_ok(f"No Data Read For Table: {table}")
+                    print_notice(f"Total Rows Sent to Syslog: {last_rows_read}")
+                
                 #Print and send each row data to syslog server
                 for row in rows:
-                    #break the loop if the row contains no data
-                    if row is None:
-                        print_ok(f"No Data Read For Table: {table}")
-                        print_notice(f"Total Rows Sent to Syslog: {last_rows_read}")
-                        break
                     #tag each row data with the table name
                     print_ok(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
                     logger.info(f"{table}: {row}")
