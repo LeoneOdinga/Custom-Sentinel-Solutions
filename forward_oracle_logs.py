@@ -8,11 +8,14 @@ from logging.handlers import SysLogHandler
 
 def setup_logging():
     """Configure logging to send logs to the syslog server."""
-    sysloghandler = SysLogHandler(address=(SYSLOG_SVR_IP, SYSLOG_SVR_PORT))
-    logger = logging.getLogger()
-    logger.addHandler(sysloghandler)
-    logger.setLevel(logging.INFO)
-    return logger
+    try:
+        sysloghandler = SysLogHandler(address=(SYSLOG_SVR_IP, SYSLOG_SVR_PORT))
+        logger = logging.getLogger()
+        logger.addHandler(sysloghandler)
+        logger.setLevel(logging.INFO)
+        return logger
+    except Exception as e:
+        print_error(f"An Error Occured: {e}")
 
 def connect_to_oracle(username, password, dsn):
     """Connect to the Oracle database."""
@@ -121,8 +124,10 @@ def print_notice(input_str):
     print("\033[0;30;47m" + input_str + "\033[0m")
 
 def main():
-    # Set up logging
-    logger = setup_logging()
+
+    # Set up logging to syslog server
+    if syslog_isAlive():
+        logger = setup_logging()
 
     # Create a state file if the file does not exist
     create_state_file()
@@ -154,8 +159,6 @@ def main():
             if not syslog_isAlive(SYSLOG_SVR_IP):
                 print_error("Cannot connect to the syslog server. Make sure the Syslog Server is running.")
                 break
-
-            print_ok("CONNECTIVITY TO SYSLOG SERVER ESTABLISHED!")
 
             if table != "":
                 # Define the SQL query and offset query results with last rows read
