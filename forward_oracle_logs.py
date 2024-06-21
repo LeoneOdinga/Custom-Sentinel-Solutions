@@ -126,8 +126,9 @@ def print_notice(input_str):
 def main():
 
     # Set up logging to syslog server
-    if syslog_isAlive():
+    if syslog_isAlive(SYSLOG_SVR_IP):
         logger = setup_logging()
+        print_ok("Logging Setup Complete!")
 
     # Create a state file if the file does not exist
     create_state_file()
