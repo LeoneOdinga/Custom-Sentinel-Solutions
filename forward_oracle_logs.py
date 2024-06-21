@@ -1,6 +1,7 @@
 import getpass
 import oracledb
 import logging
+from ping3 import ping
 import os
 from data_inputs import *
 from logging.handlers import SysLogHandler
@@ -73,8 +74,17 @@ def list_of_oracle_tables():
         print(f"File Not Found!")
         return []
     
+'''Test Connectivity to the syslog server before sending the logs'''
+def syslog_isAlive(syslog_svr_ip):
+    ping_result = ping(syslog_svr_ip, timeout=3)
+    if isinstance(ping_result, float):
+        return True 
+    elif ping_result is False:
+        return False  
+    else:
+        return False 
+    
 def main():
-
     # Set up logging
     logger = setup_logging()
 
@@ -94,6 +104,7 @@ def main():
     ORACLE_PASSWORD = getpass.getpass("Enter Oracle DB Password: ")
 
     try:
+
         # Connect to Oracle database
         connection = connect_to_oracle(ORACLE_USERNAME, ORACLE_PASSWORD, ORACLE_DSN)
 
@@ -103,6 +114,10 @@ def main():
         # For each table name, run the sql query and send the results to syslog
 
         for table in oracle_database_tables:
+            # Test connectivity to Syslog server before sending logs
+            if not syslog_isAlive(SYSLOG_SVR_IP):
+                print("Cannot connect to the syslog server. Make sure the Syslog Server is running.")
+                break
             if table != "":
                 # Define the SQL query and offset query results with last rows read
                 last_rows_read = state.get(table,0)
