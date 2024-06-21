@@ -76,14 +76,17 @@ def list_of_oracle_tables():
     
 '''Test Connectivity to the syslog server before sending the logs'''
 def syslog_isAlive(syslog_svr_ip):
-    ping_result = ping(syslog_svr_ip, timeout=3)
-    if isinstance(ping_result, float):
-        return True 
-    elif ping_result is False:
-        return False  
-    else:
-        return False 
-    
+    try:
+        ping_result = ping(syslog_svr_ip, timeout=3)
+        if isinstance(ping_result, float):
+            return True 
+        elif ping_result is False:
+            return False  
+        else:
+            return False
+    except Exception as e:
+        print(f"An Error Ocurred: {e}")
+        return False
 def main():
     # Set up logging
     logger = setup_logging()
