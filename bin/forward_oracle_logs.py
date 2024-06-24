@@ -125,7 +125,49 @@ def print_notice(input_str):
     '''
     print("\033[0;30;47m" + input_str + "\033[0m")
 
+'''Returns false if certain fields have not have values in data_inputs.py file and updates them with the correct values'''
+def missing_data_inputs():
+    verdict = True
+    data_inputs_file_path = 'data_inputs.py'
+    data_inputs =''
+    with open(data_inputs_file_path,'r') as f:
+        data_inputs = f.read()
+
+    if ORACLE_USERNAME == '':
+        verdict = False
+        print("Please Enter Oracle username: ")
+        username = input().strip()
+        data_inputs = data_inputs.replace("ORACLE_USERNAME = ''", f"ORACLE_USERNAME = '{username}'")
+
+    if ORACLE_HOSTNAME == '':
+        verdict = False
+        print("Please enter Oracle Hostname: ")
+        hostname = input().strip()
+        data_inputs = data_inputs.replace("ORACLE_HOSTNAME = ''", f"ORACLE_HOSTNAME = '{hostname}'")
+    
+    if ORACLE_SERVICE_NAME == '':
+        verdict = False
+        print("Pleae Enter Oracle Service Name: ")
+        service_name = input().strip()
+        data_inputs = data_inputs.replace("ORACLE_SERVICE_NAME = ''", f"ORACLE_SERVICE_NAME = '{service_name}'")
+    
+    if SYSLOG_SVR_IP == '':
+        verdict = False
+        print('Please Enter Syslog Server IP address: ')
+        syslog_ip = input().strip()
+        data_inputs = data_inputs.replace("SYSLOG_SVR_IP = ''", f"SYSLOG_SVR_IP = '{syslog_ip}'")
+    
+    with open(data_inputs_file_path, 'w') as f:
+        f.write(data_inputs)
+        print_ok("Script has been updated with the required constants!")
+
+    return verdict
+
 def main():
+
+    # check if the data_inputs file contain missing values
+    if not missing_data_inputs():
+        missing_data_inputs()
 
     # Set up logging to syslog server
     if syslog_isAlive(SYSLOG_SVR_IP):
