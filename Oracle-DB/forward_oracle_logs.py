@@ -191,11 +191,9 @@ def main():
                         logger.info(f"{table}: {row}")
                     
                     update_state(table, last_rows_read+len(rows))
-                    
-                    if not rows:
-                        print_ok(f"No Data Read For Table: {table}")
-                        print_notice(f"Total Rows Sent to Syslog: {last_rows_read}")
-                        pass
+                else:
+                    print_ok(f"No Data Read For Table: {table}")
+                    print_notice(f"Total Rows Sent to Syslog: {last_rows_read}") 
             else:
                 print_error("No Oracle Tables Defined!")
                 break
