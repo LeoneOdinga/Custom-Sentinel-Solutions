@@ -189,14 +189,15 @@ def main():
                         #tag each row data with the table name
                         print_ok(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
                         logger.info(f"{table}: {row}")
-
+                    
                     update_state(table, last_rows_read+len(rows))
-                else:
+                    
                     if not rows:
                         print_ok(f"No Data Read For Table: {table}")
                         print_notice(f"Total Rows Sent to Syslog: {last_rows_read}")
-                    else:
-                        print("Unexpected Error Occurred!")
+                        pass
+                else:
+                    print("Unexpected Error Occurred!")
             else:
                 print_error("No Oracle Tables Defined!")
                 break
