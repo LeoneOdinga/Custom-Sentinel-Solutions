@@ -196,8 +196,6 @@ def main():
                         print_ok(f"No Data Read For Table: {table}")
                         print_notice(f"Total Rows Sent to Syslog: {last_rows_read}")
                         pass
-                else:
-                    print("Unexpected Error Occurred!")
             else:
                 print_error("No Oracle Tables Defined!")
                 break
