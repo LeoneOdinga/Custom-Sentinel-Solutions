@@ -166,22 +166,37 @@ def main():
             if table != "":
                 # Define the SQL query and offset query results with last rows read
                 last_rows_read = state.get(table,0)
-                sql_query = f"SELECT * FROM {table} OFFSET {last_rows_read} ROWS"
-                #Execute the query
-                rows = execute_query(cursor,sql_query)
+                sql_query = f"SELECT * FROM {table}"
+                total_rows = execute_query(cursor,sql_query)
+                count_total_rows = len(total_rows)
 
-                if not rows:
-                    print_ok(f"No Data Read For Table: {table}")
-                    print_notice(f"Total Rows Sent to Syslog: {last_rows_read}")
-                
-                #Print and send each row data to syslog server
-                for row in rows:
-                    #tag each row data with the table name
-                    print_ok(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
-                    logger.info(f"{table}: {row}")
+                if count_total_rows < last_rows_read:
+                    last_rows_read = 0
+                    # print and send each row data to syslog server
+                    for row in total_rows:
+                        #tag each row data with the table name
+                        print_ok(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
+                        logger.info(f"{table}: {row}")
 
-                #update the state file with the new state data
-                update_state(table, last_rows_read+len(rows))
+                    update_state(table, last_rows_read+len(total_rows))
+
+                elif count_total_rows > last_rows_read:
+                    sql_query_offset = f"SELECT * FROM {table} OFFSET {last_rows_read} ROWS"
+                    #Execute the query
+                    rows = execute_query(cursor,sql_query_offset)
+                    #print and send each row data to syslog server
+                    for row in rows:
+                        #tag each row data with the table name
+                        print_ok(f"SUCCESSFULLY SENT {row} FROM TABLE: {table}")
+                        logger.info(f"{table}: {row}")
+
+                    update_state(table, last_rows_read+len(rows))
+                else:
+                    if not rows:
+                        print_ok(f"No Data Read For Table: {table}")
+                        print_notice(f"Total Rows Sent to Syslog: {last_rows_read}")
+                    else:
+                        print("Unexpected Error Occurred!")
             else:
                 print_error("No Oracle Tables Defined!")
                 break
