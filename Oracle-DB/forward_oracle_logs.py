@@ -167,9 +167,7 @@ def main():
                 # Define the SQL query and offset query results with last rows read
                 last_rows_read = state.get(table,0)
                 k = f"SELECT * FROM {table}"
-                sql_query = f"SELECT " + ", ".join(columns_to_select) + " FROM {table}"
-
-                print(k)
+                sql_query = f"SELECT {', '.join(columns_to_select)} FROM {table}"
 
                 total_rows = execute_query(cursor,sql_query)
                 count_total_rows = len(total_rows)
