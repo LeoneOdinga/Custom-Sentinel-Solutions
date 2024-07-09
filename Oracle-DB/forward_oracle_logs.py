@@ -168,6 +168,8 @@ def main():
                 last_rows_read = state.get(table,0)
                 sql_query = f"SELECT " + ", ".join(columns_to_select) + " FROM {table}"
 
+                print(sql_query)
+
                 total_rows = execute_query(cursor,sql_query)
                 count_total_rows = len(total_rows)
 
