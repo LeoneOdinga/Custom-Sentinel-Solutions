@@ -17,7 +17,7 @@ ORACLE_SERVICE_NAME = 'oratest1'
 
 #ORACLE AUDIT TABLE COLUMN NAMES
 # List of column names to include in the SQL query
-'''
+
 columns_to_select = [
     'AUDIT_TYPE',
     'SESSIONID',
@@ -51,7 +51,7 @@ columns_to_select = [
     'EXCLUDED_USER',
     'CURRENT_USER',
     'UNIFIED_AUDIT_POLICIES',
-    'RLS_INFO'
+    'RLS_INFO',
 ]
 '''
 columns_to_select = [
@@ -60,6 +60,9 @@ columns_to_select = [
     'MACHINE_NAME',
     'MACHINE_SERIAL_NUMBER', 
 ]
+'''
+
+print(", ".join(columns_to_select))
 
 
 ORACLE_DSN = f"{ORACLE_HOSTNAME}:{ORACLE_LISTENER_PORT}/{ORACLE_SERVICE_NAME}"
