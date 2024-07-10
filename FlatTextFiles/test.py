@@ -13,7 +13,9 @@ def extract_features(log_data):
     log_dict = {}
 
     # Extract TID, Timestamp, Unique Log Entry Identifier, and Log Level
-    match = re.match(r"TID: \[(.*?)\] \[(.*?)\] \[(.*?)\] (INFO|DEBUG|ERROR|WARNING) \{(.*?)\} - Initiator : (.*?) \| Action: (.*?) \| Target : (.*?) \| Data : (.*?) \| Result : (.*?)", log_entry)
+    
+    match = re.match(r"TID: \[(.*?)\] \[(.*?)\] \[(.*?)\] (INFO|DEBUG|ERROR|WARNING) \{(.*?)\} - Initiator : (.*?) \| Action: (.*?) \| Target : (.*?) \| Data : (.*?) \| Result : (.*)", log_entry)
+
     if match:
         log_dict['TID'] = match.group(1)
         log_dict['Timestamp'] = match.group(2)
