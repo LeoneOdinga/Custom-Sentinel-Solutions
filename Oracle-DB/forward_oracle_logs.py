@@ -183,7 +183,7 @@ def main():
                     update_state(table, last_rows_read+len(total_rows))
 
                 elif count_total_rows > last_rows_read:
-                    sql_query_offset = f"SELECT " + ", ".join(columns_to_select) + " FROM {table} OFFSET {last_rows_read} ROWS"
+                    sql_query_offset = f"SELECT {', '.join(columns_to_select)} FROM {table} OFFSET {last_rows_read} ROWS"
                     #Execute the query
                     rows = execute_query(cursor,sql_query_offset)
                     #print and send each row data to syslog server
