@@ -14,7 +14,7 @@ def extract_features(log_data):
 
     # Extract TID, Timestamp, Unique Log Entry Identifier, and Log Level
     
-    match = re.match(r"TID: \[(.*?)\] \[(.*?)\] \[(.*?)\] (INFO|DEBUG|ERROR|WARNING) \{(.*?)\} - Initiator : (.*?) \| Action: (.*?) \| Target : (.*?) \| Data : (.*?) \| Result : (.*)", log_entry)
+    match = re.match(r"TID: \[(.*?)\] \[(.*?)\] \[(.*?)\] (INFO|DEBUG|ERROR|WARN) \{(.*?)\} - Initiator : (.*?) \| Action: (.*?) \| Target : (.*?) \| Data : (.*?) \| Result : (.*)", log_entry)
 
     if match:
         log_dict['TID'] = match.group(1)
@@ -37,9 +37,14 @@ def extract_features(log_data):
 
 def main():
     log_file_path = 'audit.log'  # Assuming the file is in the same directory
-    log_data = read_log_file(log_file_path)
-    log_dict = extract_features(log_data)
-    print(json.dumps(log_dict, indent=4))
+    num_lines = 5  # Number of lines to read
+    
+    log_data = read_log_file(log_file_path)[:num_lines]  # Read only the first num_lines
+    for idx, line in enumerate(log_data, start=1):
+        log_dict = extract_features([line])
+        print(f"Log Entry {idx}:")
+        print(json.dumps(log_dict, indent=4))
+        print()
 
 if __name__ == "__main__":
     main()
