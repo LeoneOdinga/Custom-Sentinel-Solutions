@@ -5,10 +5,11 @@ def read_log_file(file_path):
         return f"Error: The file {file_path} does not exist."
     try:
         with open(file_path, 'r') as file:
-            data = file.readlines()
+            data = [line for line in file if line.strip()]
         return data
     except Exception as e:
         return f"An error occurred while reading the file: {e}"
 
 file_path = 'audit.log'
-print(read_log_file(file_path))
+for line in file_path:
+        print(line, end='')
