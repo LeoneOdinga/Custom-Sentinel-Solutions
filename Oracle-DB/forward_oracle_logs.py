@@ -131,6 +131,9 @@ def main():
     if syslog_isAlive(SYSLOG_SVR_IP):
         logger = setup_logging()
         print_ok("Logging Setup Complete!")
+    else:
+        print("Cannot communicate with the syslog server...")
+	
 
     # Create a state file if the file does not exist
     create_state_file()
