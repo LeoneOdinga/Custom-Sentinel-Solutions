@@ -49,6 +49,11 @@ def create_table_file():
         with open(TABLES_FILE, "w") as f:
             print_ok("Tables file created!")
             pass
+'''Create a db_structure json file if it does not exist'''
+def create_db_structure_file():
+    if not os.path.exists(DB_STRUCTURE_FILE):
+        with open(DB_STRUCTURE_FILE, "w") as f:
+            print_ok("DB Json file created!")
 
 '''Read the current state of the file and store it in a dictionary'''
 def read_state():
@@ -131,12 +136,17 @@ def main():
     if syslog_isAlive(SYSLOG_SVR_IP):
         logger = setup_logging()
         print_ok("Logging Setup Complete!")
+    else:
+        print("Cannot communicate with the syslog server. Check your network connection or make sure you are running the script with root privileges...")
+        stop()	
 
     # Create a state file if the file does not exist
     create_state_file()
     
     #create a table file if the file does not exist
     create_table_file()
+  
+    create_db_structure_file()
 
     # Define the list of oracle database tables to target
     oracle_database_tables = list_of_oracle_tables()
@@ -155,21 +165,23 @@ def main():
         # Create a cursor object
         cursor = connection.cursor()
 
-        # For each table name, run the sql query and send the results to syslog
-
-        for table in oracle_database_tables:
-            # Test connectivity to Syslog server before sending logs
-            if not syslog_isAlive(SYSLOG_SVR_IP):
-                print_error("Cannot connect to the syslog server. Make sure the Syslog Server is running!")
-                break
-
-            if table != "":
+        columns_to_select = []
+        
+        list_of_instances = get_instance_list(data)
+         
+        for instance in list_of_instances:
+            instance_tables = get_instance_tables(data,instance)
+            for table_name, columns in instance_tables.items():
+                table = table_name
+                columns_to_select = columns
+                # Main Logic goes here
+                if table != "":
                 # Define the SQL query and offset query results with last rows read
-                last_rows_read = state.get(table,0)
-                sql_query = f"SELECT {', '.join(columns_to_select)} FROM {table}"
+                    last_rows_read = state.get(table,0)
+                    sql_query = f"SELECT {', '.join(columns_to_select)} FROM {table}"
 
-                total_rows = execute_query(cursor,sql_query)
-                count_total_rows = len(total_rows)
+                    total_rows = execute_query(cursor,sql_query)
+                    count_total_rows = len(total_rows)
 
                 if count_total_rows < last_rows_read:
                     last_rows_read = 0
@@ -198,6 +210,7 @@ def main():
             else:
                 print_error("No Oracle Tables Defined!")
                 break
+
 
     except Exception as e:
         print_error(f"An error occured: {e}")

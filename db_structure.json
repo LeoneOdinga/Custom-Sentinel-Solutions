@@ -1,0 +1,28 @@
+{
+    "databaseServer": "oracle-db-1.northeurope.cloudapp.azure.com",
+    "instances": [
+      {
+        "instanceName": "oratest1",
+        "tables": [
+          {
+            "tableName": "SYS.DEPARTMENTS",
+            "columns": ["DEPARTMENTID", "BUILDING", "NAME", "BUDGET"]
+          }
+        ]
+      },
+      {
+        "instanceName": "ORCL2",
+        "tables": [
+          {
+            "tableName": "SYS.ORDERS",
+            "columns": ["ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT"]
+          },
+          {
+            "tableName": "SYS.CUSTOMERS",
+            "columns": ["CUSTOMER_ID", "FIRST_NAME", "LAST_NAME", "EMAIL"]
+          }
+        ]
+      }
+    ]
+  }
+  
