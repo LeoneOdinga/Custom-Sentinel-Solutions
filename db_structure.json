@@ -5,7 +5,7 @@
         "instanceName": "oratest1",
         "tables": [
           {
-            "tableName": "DEPARTMENTS",
+            "tableName": "SYS.DEPARTMENTS",
             "columns": ["DEPARTMENTID", "BUILDING", "NAME", "BUDGET"]
           }
         ]
@@ -14,11 +14,11 @@
         "instanceName": "ORCL2",
         "tables": [
           {
-            "tableName": "ORDERS",
+            "tableName": "SYS.ORDERS",
             "columns": ["ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT"]
           },
           {
-            "tableName": "CUSTOMERS",
+            "tableName": "SYS.CUSTOMERS",
             "columns": ["CUSTOMER_ID", "FIRST_NAME", "LAST_NAME", "EMAIL"]
           }
         ]
