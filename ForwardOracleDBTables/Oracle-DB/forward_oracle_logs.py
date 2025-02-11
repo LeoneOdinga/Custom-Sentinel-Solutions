@@ -43,12 +43,6 @@ def create_state_file():
             print_ok("State file created!")
             pass
 
-'''Create a tables file if the file does not exist'''
-def create_table_file():
-    if not os.path.exists(TABLES_FILE):
-        with open(TABLES_FILE, "w") as f:
-            print_ok("Tables file created!")
-            pass
 '''Create a db_structure json file if it does not exist'''
 def create_db_structure_file():
     if not os.path.exists(DB_STRUCTURE_FILE):
@@ -75,15 +69,6 @@ def update_state(table_name, last_rows_read):
         for table, rows in state.items():
             f.write(f"{table}:{rows}\n")
 
-'''Returns a list of oracle table names defined in the tables file'''
-def list_of_oracle_tables():
-    try:
-        with open(TABLES_FILE, 'r') as file:
-            lines = file.readlines()
-            return [line.strip() for line in lines]
-    except FileNotFoundError:
-        print_error(f"File Not Found!")
-        return []
     
 '''Test Connectivity to the syslog server before sending the logs'''
 def syslog_isAlive(syslog_svr_ip):
@@ -138,18 +123,14 @@ def main():
         print_ok("Logging Setup Complete!")
     else:
         print("Cannot communicate with the syslog server. Check your network connection or make sure you are running the script with root privileges...")
-        stop()	
+        exit()	
 
     # Create a state file if the file does not exist
     create_state_file()
     
-    #create a table file if the file does not exist
-    create_table_file()
   
     create_db_structure_file()
 
-    # Define the list of oracle database tables to target
-    oracle_database_tables = list_of_oracle_tables()
     
     # Read the state for the tables
     state = read_state()
@@ -207,10 +188,6 @@ def main():
                 else:
                     print_ok(f"No Data Read For Table: {table}")
                     print_notice(f"Total Rows Sent to Syslog: {last_rows_read}") 
-            else:
-                print_error("No Oracle Tables Defined!")
-                break
-
 
     except Exception as e:
         print_error(f"An error occured: {e}")

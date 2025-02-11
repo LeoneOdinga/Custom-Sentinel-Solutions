@@ -7,8 +7,13 @@
           {
             "tableName": "SYS.DEPARTMENTS",
             "columns": ["DEPARTMENTID", "BUILDING", "NAME", "BUDGET"]
+          },
+          {
+            "tableName": "SYS.COURSES",
+            "columns": ["COURSEID", "TITLE", "CREDITS", "DEPARTMENTID"]
           }
         ]
+        
       },
       {
         "instanceName": "ORCL2",
